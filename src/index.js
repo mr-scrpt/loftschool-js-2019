@@ -60,11 +60,6 @@ function returnFnResult(fn) {
    console.log(f()); // выведет 13
  */
 function returnCounter(number = 0) {
-    // Вариант 1
-    /* return function F() {
-      return number += 1;
-    } */
-    // Вариант 2
     return () => ++number;
 }
 
@@ -96,10 +91,8 @@ function returnArgumentsArray() {
 
    console.log(newSum()) выведет 6
  */
-function bindFunction(fn, ...args) {
-    return () => {
-        return fn.apply(this, [...args]);
-    }
+function bindFunction(fn) {
+    return () => fn.apply(this, [...arguments].slice(1));
 }
 
 export {
