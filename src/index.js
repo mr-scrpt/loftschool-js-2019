@@ -19,10 +19,12 @@ function forEach(array, fn) {
  Посмотрите как работает map и повторите это поведение для массива, который будет передан в параметре array
  */
 function map(array, fn) {
-    const arr = [];
+    let arr = [];
+
     for (let i = 0; i < array.length; i++) {
         arr.push(fn(array[i], [i], array));
     }
+
     return arr;
 }
 
@@ -34,6 +36,7 @@ function map(array, fn) {
  */
 function reduce(array, fn, initial) {
     let val;
+
     for (let i = 0; i < array.length; i++) {
         if (i === 0) {
             if (!initial) {
@@ -45,6 +48,7 @@ function reduce(array, fn, initial) {
         }
         val = fn(val, array[i], i, array);
     }
+
     return val;
 
 }
@@ -59,9 +63,13 @@ function reduce(array, fn, initial) {
  */
 function upperProps(obj) {
     const result = [];
+
     for (let item in obj) {
-        result.push(item.toUpperCase());
+        if (obj.hasOwnProperty(item)) {
+            result.push(item.toUpperCase());
+        }
     }
+
     return result;
 }
 
@@ -82,7 +90,7 @@ function slice(array, from = 0, to = array.length) {
     }
 
     for (let i = from; i < to; i++) {
-        if(array[i]) {
+        if (array[i]) {
             res.push(array[i])
         }
     }
@@ -97,11 +105,12 @@ function slice(array, from = 0, to = array.length) {
  Proxy должен перехватывать все попытки записи значений свойств и возводить это значение в квадрат
  */
 function createProxy(obj) {
-    const handler ={
+    const handler = {
         get(target, name) {
             return target[name] ** 2;
         }
     }
+
     return new Proxy(obj, handler)
 }
 
