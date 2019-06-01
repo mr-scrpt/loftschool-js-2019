@@ -23,8 +23,15 @@ function isAllTrue(array, fn) {
     if (typeof fn !== 'function') { // или (typeof fn !== typeof new Function)
         throw new Error('fn is not a function');
     }
+    let isTrue = true;
 
-    return array.every(fn)
+    array.filter( item => {
+        if (fn(item) === false) {
+            isTrue = false;
+        }
+    });
+
+    return isTrue;
 
 }
 
@@ -52,7 +59,15 @@ function isSomeTrue(array, fn) {
         throw new Error('fn is not a function');
     }
 
-    return array.some(fn)
+    let isFalse = false;
+
+    array.filter( item => {
+        if (fn(item) === true) {
+            isFalse = true;
+        }
+    });
+
+    return isFalse;
 }
 
 /*
@@ -119,7 +134,7 @@ function calculator(number = 0) {
 
         div () {
 
-            return [...arguments].reduce( (accumulator, currentValue, i) => {
+            return [...arguments].reduce( (accumulator, currentValue) => {
                 if (currentValue === 0) {
                     throw new Error('division by 0')
                 }
@@ -130,7 +145,7 @@ function calculator(number = 0) {
         },
 
         mul () {
-            return [...arguments].reduce( (accumulator, currentValue, i) => {
+            return [...arguments].reduce( (accumulator, currentValue) => {
                 return accumulator * currentValue;
             }, number);
 
