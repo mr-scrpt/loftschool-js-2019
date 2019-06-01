@@ -67,13 +67,11 @@ function isSomeTrue(array, fn) {
    - fn не является функцией (с текстом "fn is not a function")
  */
 function returnBadArguments(fn) {
-
     if (typeof fn !== 'function' ) {
         throw new Error('fn is not a function');
     }
-    const arg = [...arguments].slice(1);
 
-    const errArr = arg.filter(item =>{
+    return [...arguments].slice(1).filter(item =>{
         try {
             fn(item);
         } catch (e) {
@@ -81,7 +79,6 @@ function returnBadArguments(fn) {
         }
     });
 
-    return errArr;
 }
 
 /*
@@ -109,58 +106,34 @@ function calculator(number = 0) {
 
     const obj = {
         sum () {
-            const arg = [...arguments];
-            let sums = arg.reduce( (accumulator, currentValue) => {
+            return [...arguments].reduce( (accumulator, currentValue) => {
                 return accumulator + currentValue;
-            });
-
-            return number + sums;
+            }, number);
         },
 
         dif () {
-            const arg = [...arguments];
-            let sums = arg.reduce( (accumulator, currentValue) => {
-                return accumulator + currentValue;
-            });
-
-            return number - sums;
+            return [...arguments].reduce( (accumulator, currentValue) => {
+                return accumulator - currentValue;
+            }, number);
         },
 
         div () {
-            const arg = [...arguments];
-            let sums = arg.reduce( (accumulator, currentValue, i) => {
-                let res;
 
+            return [...arguments].reduce( (accumulator, currentValue, i) => {
                 if (currentValue === 0) {
                     throw new Error('division by 0')
                 }
-                if ( i > 0) {
-                    res = accumulator / currentValue;
-                } else {
-                    res = number / currentValue;
-                }
 
-                return res;
+                return accumulator / currentValue;
             }, number);
 
-            return sums;
         },
 
         mul () {
-            const arg = [...arguments];
-            let sums = arg.reduce( (accumulator, currentValue, i) => {
-                let res;
-
-                if ( i > 0) {
-                    res = accumulator * currentValue;
-                } else {
-                    res = number * currentValue;
-                }
-
-                return res;
+            return [...arguments].reduce( (accumulator, currentValue, i) => {
+                return accumulator * currentValue;
             }, number);
 
-            return sums;
         }
     };
 
