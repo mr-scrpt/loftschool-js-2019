@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <div class="some-class-1">
+    <b>привет!</b>
+    <b class="some-class-1 some-class-2">loftschool</b>
+  </div>
+<script>
+    function collectDOMStat(root) {
+        let obj = {
+            tags:{},
+            classes: {},
+            texts: 0
+        };
+        const reader = (where)=>{
+            let list = where.childNodes;
+
+            if (list.length > 0) {
+                Array.from(list).forEach( item=>{
+                    if (item.nodeType === 1) {
+                        let classValue = item.classList;
+                        let tagValue = item.tagName;
+
+                        if (obj.tags.hasOwnProperty(tagValue)) {
+                            obj.tags[tagValue]++;
+                        }else {
+                            obj.tags[tagValue] = 1;
+                        }
+                        if(classValue.length){
+                            classValue.forEach(className=>{
+                                if (obj.classes.hasOwnProperty(className)) {
+                                    obj.classes[className]++;
+                                }else {
+                                    obj.classes[className] = 1;
+                                }
+                            })
+
+                        }
+
+
+                    } else if (item.nodeType === 3) {
+
+                        let textValue = item.textContent;
+                            obj.texts++;
+
+                    }
+
+                    reader(item);
+                });
+
+            }
+        };
+
+        reader(root);
+        return obj;
+
+    }
+
+    // if (item) {
+    //
+    //
+    //
+    //     if (obj.tags.hasOwnProperty(tagValue)) {
+    //         obj.tags[tagValue]++;
+    //     }else {
+    //         obj.tags[tagValue] = 1;
+    //     }
+    // }
+
+    console.log(collectDOMStat(document.body));
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+

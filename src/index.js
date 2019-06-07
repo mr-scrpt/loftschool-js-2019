@@ -11,6 +11,11 @@
    createDivWithText('loftschool') // создаст элемент div, поместит в него 'loftschool' и вернет созданный элемент
  */
 function createDivWithText(text) {
+    let div = document.createElement('div');
+
+    div.innerText = text;
+
+    return div;
 }
 
 /*
@@ -22,6 +27,7 @@ function createDivWithText(text) {
    prepend(document.querySelector('#one'), document.querySelector('#two')) // добавит элемент переданный первым аргументом в начало элемента переданного вторым аргументом
  */
 function prepend(what, where) {
+    where.prepend(what)
 }
 
 /*
@@ -44,6 +50,19 @@ function prepend(what, where) {
    findAllPSiblings(document.body) // функция должна вернуть массив с элементами div и span т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
+    let elems = where.children,
+        result = [],
+        next;
+
+    for ( let item of elems ) {
+        next = item.nextElementSibling;
+
+        if (next && next.tagName === 'P') {
+            result.push(item);
+        }
+    }
+
+    return result;
 }
 
 /*
@@ -66,7 +85,7 @@ function findAllPSiblings(where) {
 function findError(where) {
     var result = [];
 
-    for (var child of where.childNodes) {
+    for (var child of where.children) {
         result.push(child.innerText);
     }
 
@@ -86,6 +105,13 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    let elems = where.childNodes;
+
+    for (let item of elems) {
+        if (item.nodeType === 3 ) {
+            where.removeChild(item);
+        }
+    }
 }
 
 /*
@@ -100,6 +126,22 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    let list = where.childNodes;
+
+    if (list.length > 0) {
+        Array.from(list).forEach(item=>{
+            if (item.nodeType === 3) {
+                let parent = item.parentNode;
+
+                parent.removeChild(item);
+            }
+            if (item) {
+                deleteTextNodesRecursive(item)
+            }
+        });
+
+    }
+
 }
 
 /*
@@ -114,7 +156,10 @@ function deleteTextNodesRecursive(where) {
  Постарайтесь не создавать глобальных переменных
 
  Пример:
-   Для дерева <div class="some-class-1"><b>привет!</b> <b class="some-class-1 some-class-2">loftschool</b></div>
+   Для дерева <div class="some-class-1">
+   <b>привет!</b>
+    <b class="some-class-1 some-class-2">loftschool</b>
+    </div>
    должен быть возвращен такой объект:
    {
      tags: { DIV: 1, B: 2},
@@ -123,6 +168,53 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    let obj = {
+        tags:{},
+        classes: {},
+        texts: 0
+    };
+    const reader = (where)=>{
+        let list = where.childNodes;
+
+        if (list.length > 0) {
+            Array.from(list).forEach( item=>{
+                if (item.nodeType === 1) {
+                    let classValue = item.classList;
+                    let tagValue = item.tagName;
+
+                    if (obj.tags.hasOwnProperty(tagValue)) {
+                        obj.tags[tagValue]++;
+                    }else {
+                        obj.tags[tagValue] = 1;
+                    }
+                    if(classValue.length){
+                        classValue.forEach(className=>{
+                            if (obj.classes.hasOwnProperty(className)) {
+                                obj.classes[className]++;
+                            }else {
+                                obj.classes[className] = 1;
+                            }
+                        })
+
+                    }
+
+
+                } else if (item.nodeType === 3) {
+
+                    let textValue = item.textContent;
+                    obj.texts++;
+
+                }
+
+                reader(item);
+            });
+
+        }
+    };
+
+    reader(root);
+    return obj;
+
 }
 
 /*
@@ -158,6 +250,34 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+    const res = {
+        type: '',
+        nodes: []
+    };
+    const observer = new MutationObserver((mutations)=> {
+        mutations.forEach((mutation) => {
+
+            if (Object.keys(mutation.addedNodes).length) {
+                res.type = 'insert';
+
+                for (let item of mutation.addedNodes) {
+                    res.nodes.push(item);
+                }
+
+            } else if (Object.keys(mutation.removedNodes).length) {
+                res.type = 'remove';
+                for (let item of mutation.removedNodes) {
+                    res.nodes.push(item);
+                }
+            }
+            fn(res);
+
+        });
+    });
+
+    const config = { attributes: true, childList: true, characterData: true };
+
+    observer.observe(where, config);
 }
 
 export {
