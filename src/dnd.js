@@ -27,6 +27,55 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
+    let div = document.createElement('div');
+
+    let maxWidth = 200,
+        minWidth = 0,
+        maxHeight = 400,
+        minHeight = 0,
+        minYPos = 0,
+        maxYPos = 1080,
+        minXPos = 0,
+        maxXPos = 1920;
+
+    div.classList.add('draggable-div');
+    // Рандомизатор значений
+    function randomValue(min, max) {
+        let value = Math.floor(min + Math.random() * (max + 1 - min));
+
+        return value;
+    }
+    // Рандомизатор цвета
+    function getRandomColor() {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+
+        return color;
+    }
+
+    let width = randomValue(minWidth, maxWidth);
+    let height = randomValue(minHeight, maxHeight);
+
+    div.style.width = width + 'px';
+    div.style.height = height + 'px';
+
+    let color = getRandomColor();
+
+    div.style.background = color;
+
+    let positionX = randomValue(minXPos, maxXPos);
+    let positionY = randomValue(minYPos, maxYPos);
+
+    div.style.position = 'relative';
+
+    div.style.top = positionX + 'px';
+    div.style.left = positionY + 'px';
+
+    return div;
 }
 
 /*
@@ -38,6 +87,28 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    target.addEventListener('mousedown', (e)=>{
+
+        target.style.position = 'absolute';
+        target.style.zIndex = '1000';
+
+        function moveAt(pageX, pageY) {
+            target.style.left = pageX - target.offsetWidth / 2 + 'px';
+            target.style.top = pageY - target.offsetHeight / 2 + 'px';
+        }
+
+        function onMouseMove(e) {
+            moveAt(e.pageX, e.pageY);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        target.addEventListener('mouseup', (e)=>{
+            document.removeEventListener('mousemove', onMouseMove);
+            target.onmouseup = null;
+        });
+
+    })
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
