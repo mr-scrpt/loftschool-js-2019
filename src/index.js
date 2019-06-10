@@ -54,7 +54,7 @@ function findAllPSiblings(where) {
         result = [],
         next;
 
-    for ( let item of elems ) {
+    for (let item of elems) {
         next = item.nextElementSibling;
 
         if (next && next.tagName === 'P') {
@@ -105,10 +105,13 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    if (where.childNodes.length === 0) {
+        return where;
+    }
     let elems = where.childNodes;
 
     for (let item of elems) {
-        if (item.nodeType === 3 ) {
+        if (item.nodeType === 3) {
             where.removeChild(item);
         }
     }
@@ -126,22 +129,26 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+
+    if (where.childNodes.length === 0) {
+        return where;
+    }
+
     let list = where.childNodes;
 
     if (list.length > 0) {
-        Array.from(list).forEach(item=>{
+        Array.from(list).forEach(item => {
             if (item.nodeType === 3) {
                 let parent = item.parentNode;
 
                 parent.removeChild(item);
+
             }
             if (item) {
                 deleteTextNodesRecursive(item)
             }
         });
-
     }
-
 }
 
 /*
@@ -169,41 +176,37 @@ function deleteTextNodesRecursive(where) {
  */
 function collectDOMStat(root) {
     let obj = {
-        tags:{},
+        tags: {},
         classes: {},
         texts: 0
     };
-    const reader = (where)=>{
+    const reader = (where) => {
         let list = where.childNodes;
 
         if (list.length > 0) {
-            Array.from(list).forEach( item=>{
+            Array.from(list).forEach(item => {
                 if (item.nodeType === 1) {
                     let classValue = item.classList;
                     let tagValue = item.tagName;
 
                     if (obj.tags.hasOwnProperty(tagValue)) {
                         obj.tags[tagValue]++;
-                    }else {
+                    } else {
                         obj.tags[tagValue] = 1;
                     }
-                    if(classValue.length){
-                        classValue.forEach(className=>{
+                    if (classValue.length) {
+                        classValue.forEach(className => {
                             if (obj.classes.hasOwnProperty(className)) {
                                 obj.classes[className]++;
-                            }else {
+                            } else {
                                 obj.classes[className] = 1;
                             }
                         })
 
                     }
 
-
                 } else if (item.nodeType === 3) {
-
-                    let textValue = item.textContent;
                     obj.texts++;
-
                 }
 
                 reader(item);
@@ -213,6 +216,7 @@ function collectDOMStat(root) {
     };
 
     reader(root);
+
     return obj;
 
 }
@@ -254,7 +258,7 @@ function observeChildNodes(where, fn) {
         type: '',
         nodes: []
     };
-    const observer = new MutationObserver((mutations)=> {
+    const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
 
             if (Object.keys(mutation.addedNodes).length) {
