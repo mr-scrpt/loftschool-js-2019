@@ -41,9 +41,7 @@ function createDiv() {
     div.classList.add('draggable-div');
     // Рандомизатор значений
     function randomValue(min, max) {
-        let value = Math.floor(min + Math.random() * (max + 1 - min));
-
-        return value;
+        return Math.floor(min + Math.random() * (max + 1 - min));
     }
     // Рандомизатор цвета
     function getRandomColor() {
@@ -63,9 +61,7 @@ function createDiv() {
     div.style.width = width + 'px';
     div.style.height = height + 'px';
 
-    let color = getRandomColor();
-
-    div.style.background = color;
+    div.style.background = getRandomColor();
 
     let positionX = randomValue(minXPos, maxXPos);
     let positionY = randomValue(minYPos, maxYPos);
@@ -103,7 +99,7 @@ function addListeners(target) {
 
         document.addEventListener('mousemove', onMouseMove);
 
-        target.addEventListener('mouseup', (e)=>{
+        target.addEventListener('mouseup', ()=>{
             document.removeEventListener('mousemove', onMouseMove);
             target.onmouseup = null;
         });
