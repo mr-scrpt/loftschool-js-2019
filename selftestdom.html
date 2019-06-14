@@ -10,78 +10,21 @@
     <b class="some-class-1 some-class-2">loftschool</b>
   </div>
 <script>
-    function collectDOMStat(root) {
-        let obj = {
-            tags:{},
-            classes: {},
-            texts: 0
-        };
-        const reader = (where)=>{
-            let list = where.childNodes;
+    function deleteTextNodesRecursive(where) {
+        let list = where.childNodes;
 
-            if (list.length > 0) {
-                Array.from(list).forEach( item=>{
-                    if (item.nodeType === 1) {
-                        let classValue = item.classList;
-                        let tagValue = item.tagName;
+        if (list.length > 0) {
 
-                        if (obj.tags.hasOwnProperty(tagValue)) {
-                            obj.tags[tagValue]++;
-                        }else {
-                            obj.tags[tagValue] = 1;
-                        }
-                        if(classValue.length){
-                            classValue.forEach(className=>{
-                                if (obj.classes.hasOwnProperty(className)) {
-                                    obj.classes[className]++;
-                                }else {
-                                    obj.classes[className] = 1;
-                                }
-                            })
+            for (let item of list) {
+                if (item.nodeType === 3) {
+                    let parent = item.parentNode;
 
-                        }
-
-
-                    } else if (item.nodeType === 3) {
-
-                        let textValue = item.textContent;
-                            obj.texts++;
-
-                    }
-
-                    reader(item);
-                });
-
+                    parent.removeChild(item);
+                }
+                if (item) {
+                    deleteTextNodesRecursive(item)
+                }
             }
-        };
-
-        reader(root);
-        return obj;
-
+        }
     }
-
-    // if (item) {
-    //
-    //
-    //
-    //     if (obj.tags.hasOwnProperty(tagValue)) {
-    //         obj.tags[tagValue]++;
-    //     }else {
-    //         obj.tags[tagValue] = 1;
-    //     }
-    // }
-
-    console.log(collectDOMStat(document.body));
 </script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
-
