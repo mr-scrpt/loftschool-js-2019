@@ -32,8 +32,10 @@ function removeListener(eventName, target, fn) {
  Пример:
    skipDefault('click', document.querySelector('a')) // после вызова функции, клики на указанную ссылку не должны приводить к переходу на другую страницу
  */
+
 function skipDefault(eventName, target) {
     target.addEventListener(eventName, (e)=> e.preventDefault())
+
 }
 
 /*
@@ -46,9 +48,7 @@ function skipDefault(eventName, target) {
  */
 function emulateClick(target) {
     const event = new Event('click');
-
     target.dispatchEvent(event);
-
 }
 
 /*
@@ -60,6 +60,7 @@ function emulateClick(target) {
  Пример:
    delegate(document.body, () => console.log('кликнули на button')) // добавит такой обработчик кликов для body, который будет вызывать указанную функцию только если кликнули на кнопку (элемент с тегом button)
  */
+
 function delegate(target, fn) {
     target.addEventListener('click', (e)=>{
         if (e.target.tagName === 'BUTTON' ) {
@@ -77,6 +78,8 @@ function delegate(target, fn) {
  Пример:
    once(document.querySelector('button'), () => console.log('обработчик выполнился!')) // добавит такой обработчик кликов для указанного элемента, который вызовется только один раз и затем удалится
  */
+
+
 function once(target, fn) {
     let once = true;
 
@@ -85,9 +88,10 @@ function once(target, fn) {
             fn();
             once = false;
         }
-        target.removeEventListener('click', (e)=> e);
-    });
 
+        target.removeEventListener('click', (e) => e);
+
+    });
 }
 
 export {
