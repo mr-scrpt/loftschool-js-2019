@@ -110,33 +110,91 @@ function renderList(list) {
         filterResult.appendChild(fragment);
     }
 }
+// Функция которая содает или удааляет кнопку для перезапроса данных
+function reloader(mode) {
+    const readyBlockMessage = document.querySelector('.blockMessage');
 
-addEventListener('DOMContentLoaded', async (e)=>{
+    if (mode === 'build') {
+        if (readyBlockMessage) {
+            readyBlockMessage.parentNode.removeChild(readyBlockMessage);
+
+        }
+        const button = document.createElement('button');
+        const message = document.createElement('span');
+        const blockMessage = document.createElement('div');
+
+        blockMessage.classList.add('blockMessage');
+        button.classList.add('button');
+        button.textContent = 'Перезапросить данные';
+        message.classList.add('message');
+        message.textContent = 'Не удалось загрузить города';
+
+        blockMessage.appendChild(button);
+        blockMessage.appendChild(message);
+
+        homeworkContainer.appendChild(blockMessage);
+
+    } else if (mode === 'destroy') {
+        readyBlockMessage.parentNode.removeChild(readyBlockMessage);
+
+    }
+}
+
+// Функция получения данных с сервера и записи в хранилище
+const getTownFromServer = async ()=>{
+    let res = await loadTowns();
+
+    localStorage.setItem('townList', JSON.stringify(res));
+
+    return res;
+};
+
+// Функция получения данных из хранилища
+const getTownFromStore = ()=>{
+    return JSON.parse(localStorage.getItem('townList'));
+};
+
+addEventListener('DOMContentLoaded', async ()=>{
     try {
-        let res = await loadTowns('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
-        renderList(res);
-        loadingBlock.style.display = 'none';
-        filterBlock.style.display = 'block';
-    } catch (e) {
-        let button = document.createElement('button');
+        let res = await getTownFromServer();
 
-        button.classList.add('reload');
-        button.innerText = 'Перезапросить';
-        loadingBlock.innerHTML = '<strong>Не удалось загрузить города</strong>';
-        loadingBlock.appendChild(button);
+        if (res) {
+            renderList(res);
+            loadingBlock.style.display = 'none';
+            filterBlock.style.display = 'block';
+        }
+
+    } catch (e) {
+        loadingBlock.textContent = '';
+        reloader('build');
+
     }
 });
+document.body.addEventListener('click', async (e)=> {
+    if (e.target.classList.contains('button')) {
+        try {
+            let res = await getTownFromStore();
 
-document.body.addEventListener('click', e=>{
-    if (e.target.classList.contains('reload')) {
+            if (res) {
+                reloader('destroy');
+                renderList(res);
+                loadingBlock.style.display = 'none';
+                filterBlock.style.display = 'block';
+            }
 
-    }
-})
+        } catch (e) {
+            loadingBlock.textContent = '';
+            reloader('build');
+
+        }
+    }      
+});
 
 filterInput.addEventListener('keyup', async (e)=> {
     try {
         loadingBlock.style.display = 'block';
-        let res = await loadTowns();
+        let res = await getTownFromStore();
+
         filterResult.innerHTML = '';
         let filterRes = [];
 
@@ -147,6 +205,10 @@ filterInput.addEventListener('keyup', async (e)=> {
         }
         renderList(filterRes);
         loadingBlock.style.display = 'none';
+
+        if (e.target.value === '') {
+            filterResult.innerHTML = '';
+        }
     } catch (e) {
         throw new Error(e.message)
     }
