@@ -57,6 +57,8 @@ window.addEventListener('DOMContentLoaded', ()=>{
     const allCookie = parseCookie();
 
     renderTable(allCookie);
+    initDeleteButton()
+
 });
 
 addButton.addEventListener('click', () => {
@@ -65,7 +67,6 @@ addButton.addEventListener('click', () => {
     const allCookie = parseCookie();
 
     renderTable(allCookie);
-    checkCookie();
 });
 
 function parseCookie() {
@@ -85,23 +86,49 @@ function addCookie() {
         document.cookie = `${addNameInput.value}=${addValueInput.value};`;
     }
 }
-function checkCookie(name, value) {
+function deleteCookie(name) {
+    document.cookie = `${name}=''; expires='Thu, 01 Jan 1970 00:00:01 GMT'`;
+}
+
+function deleteRow(row) {
+    row.parentNode.removeChild(row);
+}
+function initDeleteButton() {
+    listTable.addEventListener('click', e => {
+        if (e.target.classList.contains('button')) {
+            deleteCookie(e.target.dataset.name);
+            deleteRow(e.target.closest('tr'));
+        }
+    })
+
+}
+/*function checkCookie(name, value) {
     const cookie = parseCookie();
 
     if (cookie.hasOwnProperty(name)) {
         cookie[name] = value;
     }
 
-}
+}*/
+
 function addRowTable(name, value) {
     const tr = document.createElement('tr');
     const tdName = document.createElement('td');
     const tdValue = document.createElement('td');
+    const tdDel = document.createElement('td');
+    const button = document.createElement('button');
 
     tdName.innerText = name;
     tdValue.innerText = value;
+    button.innerText = 'Удалить';
+
+    button.dataset.name = name;
+    button.classList.add('button');
+    tdDel.appendChild(button);
+
     tr.appendChild(tdName);
     tr.appendChild(tdValue);
+    tr.appendChild(tdDel);
     listTable.appendChild(tr);
 }
 function renderTable(obj) {
