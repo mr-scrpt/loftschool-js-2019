@@ -63,10 +63,22 @@ window.addEventListener('DOMContentLoaded', ()=>{
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
-    addCookie();
-    const allCookie = parseCookie();
+    const name = addNameInput.value;
+    const value = addValueInput.value;
+    const filterValue = filterNameInput.value;
 
-    renderTable(allCookie);
+    addCookie(name, value);
+    clearForm();
+
+    if (!filterValue) {
+        const allCookie = parseCookie();
+
+        renderTable(allCookie)
+    } else {
+        if (isMatching(name, filterValue) || isMatching(value, filterValue)) {
+            addRowTable(name, value);
+        }
+    }
 });
 
 function parseCookie() {
@@ -81,9 +93,9 @@ function parseCookie() {
     }, {})
 
 }
-function addCookie() {
-    if ( addNameInput.value) {
-        document.cookie = `${addNameInput.value}=${addValueInput.value};`;
+function addCookie(name, value) {
+    if (name) {
+        document.cookie = `${name}=${value};`;
     }
 }
 function deleteCookie(name) {
@@ -163,4 +175,8 @@ function filterObj(value, obj) {
     }
 
     return filterObj;
+}
+function clearForm() {
+    addNameInput.value = '';
+    addValueInput.value = '';
 }
