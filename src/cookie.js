@@ -45,19 +45,28 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    const value = filterNameInput.value;
+    const allCookie = parseCookie();
+    const res = filterObj(value, allCookie);
+
+    renderTable(res);
+
 });
 
 window.addEventListener('DOMContentLoaded', ()=>{
-    renderTable();
+    const allCookie = parseCookie();
+
+    renderTable(allCookie);
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
     addCookie();
-    renderTable();
+    const allCookie = parseCookie();
+
+    renderTable(allCookie);
     checkCookie();
 });
-
 
 function parseCookie() {
     const cookie = document.cookie;
@@ -71,13 +80,11 @@ function parseCookie() {
     }, {})
 
 }
-
 function addCookie() {
-    document.cookie = `${addNameInput.value}=${addValueInput.value};`;
-
-    //return { name: addNameInput.value, value: addValueInput.value };
+    if ( addNameInput.value) {
+        document.cookie = `${addNameInput.value}=${addValueInput.value};`;
+    }
 }
-
 function checkCookie(name, value) {
     const cookie = parseCookie();
 
@@ -86,7 +93,6 @@ function checkCookie(name, value) {
     }
 
 }
-
 function addRowTable(name, value) {
     const tr = document.createElement('tr');
     const tdName = document.createElement('td');
@@ -98,13 +104,36 @@ function addRowTable(name, value) {
     tr.appendChild(tdValue);
     listTable.appendChild(tr);
 }
-function renderTable() {
+function renderTable(obj) {
     listTable.innerHTML = '';
-    let allCookies = parseCookie();
 
-    for (let key in allCookies) {
-        if (allCookies.hasOwnProperty(key)) {
-            addRowTable(key, allCookies[key]);
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            addRowTable(key, obj[key]);
         }
     }
+}
+
+function isMatching(full, chunk) {
+    let regexp = new RegExp(chunk, 'i');
+
+    if (full.search(regexp) > -1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function filterObj(value, obj) {
+    let filterObj = {};
+
+    for (let key in obj) {
+        if (isMatching(key, value) || isMatching(obj[key], value)) {
+            if (obj.hasOwnProperty(key)) {
+                filterObj[key] = obj[key];
+            }
+
+        }
+    }
+
+    return filterObj;
 }
