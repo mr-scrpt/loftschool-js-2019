@@ -76,8 +76,14 @@ addButton.addEventListener('click', () => {
         renderTable(allCookie)
     } else {
         if (isMatching(name, filterValue) || isMatching(value, filterValue)) {
-            addRowTable(name, value);
+            if (name === filterValue) {
+                addCookie(name, value);
+                deleteRowTable(getRowTable(name));
+            } else {
+                addRowTable(name, value);
+            }
         }
+
     }
 });
 
@@ -102,14 +108,12 @@ function deleteCookie(name) {
     document.cookie = `${name}=''; expires='Thu, 01 Jan 1970 00:00:01 GMT'`;
 }
 
-function deleteRow(row) {
-    row.parentNode.removeChild(row);
-}
+
 function initDeleteButton() {
     listTable.addEventListener('click', e => {
         if (e.target.classList.contains('button')) {
             deleteCookie(e.target.dataset.name);
-            deleteRow(e.target.closest('tr'));
+            deleteRowTable(e.target.closest('tr'));
         }
     })
 
@@ -138,10 +142,18 @@ function addRowTable(name, value) {
     button.classList.add('button');
     tdDel.appendChild(button);
 
+    tr.classList.add(name);
     tr.appendChild(tdName);
     tr.appendChild(tdValue);
     tr.appendChild(tdDel);
     listTable.appendChild(tr);
+}
+function deleteRowTable(row) {
+    row.parentNode.removeChild(row);
+}
+function getRowTable(name) {
+    return document.getElementsByClassName(name)[0];
+
 }
 function renderTable(obj) {
     listTable.innerHTML = '';
