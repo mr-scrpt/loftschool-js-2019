@@ -12,11 +12,11 @@ rules.push({
 
 module.exports = {
     entry: {
-        main: './src/index.js',
-        dnd: './src/towns.js'
+        // main: './src/index.js',
+        dnd: './src/cookie.js'
     },
     devServer: {
-        index: './src/towns.html'
+        index: './src/cookie.html'
     },
     output: {
         filename: '[name].[hash].js',
@@ -36,8 +36,8 @@ module.exports = {
         }),
         new HtmlPlugin({
             title: 'Div Drag And Drop',
-            template: './src/towns.hbs',
-            filename: './src/towns.html',
+            template: './src/cookie.hbs',
+            filename: './src/cookie.html',
             chunks: ['dnd']
         }),
         new CleanWebpackPlugin(['dist'])

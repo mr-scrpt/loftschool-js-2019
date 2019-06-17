@@ -47,6 +47,64 @@ filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
 });
 
+window.addEventListener('DOMContentLoaded', ()=>{
+    renderTable();
+});
+
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    addCookie();
+    renderTable();
+    checkCookie();
 });
+
+
+function parseCookie() {
+    const cookie = document.cookie;
+
+    return cookie.split('; ').reduce((prev, current)=>{
+        let [name, value] = current.split('=');
+
+        prev[name] = value;
+
+        return prev;
+    }, {})
+
+}
+
+function addCookie() {
+    document.cookie = `${addNameInput.value}=${addValueInput.value};`;
+
+    //return { name: addNameInput.value, value: addValueInput.value };
+}
+
+function checkCookie(name, value) {
+    const cookie = parseCookie();
+
+    if (cookie.hasOwnProperty(name)) {
+        cookie[name] = value;
+    }
+
+}
+
+function addRowTable(name, value) {
+    const tr = document.createElement('tr');
+    const tdName = document.createElement('td');
+    const tdValue = document.createElement('td');
+
+    tdName.innerText = name;
+    tdValue.innerText = value;
+    tr.appendChild(tdName);
+    tr.appendChild(tdValue);
+    listTable.appendChild(tr);
+}
+function renderTable() {
+    listTable.innerHTML = '';
+    let allCookies = parseCookie();
+
+    for (let key in allCookies) {
+        if (allCookies.hasOwnProperty(key)) {
+            addRowTable(key, allCookies[key]);
+        }
+    }
+}
