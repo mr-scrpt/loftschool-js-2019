@@ -77,7 +77,6 @@ addButton.addEventListener('click', () => {
     } else {
         if (isMatching(name, filterValue) || isMatching(value, filterValue)) {
             if (name === filterValue) {
-                addCookie(name, value);
                 deleteRowTable(getRowTable(name));
             } else {
                 addRowTable(name, value);
@@ -107,7 +106,6 @@ function addCookie(name, value) {
 function deleteCookie(name) {
     document.cookie = `${name}=''; expires='Thu, 01 Jan 1970 00:00:01 GMT'`;
 }
-
 
 function initDeleteButton() {
     listTable.addEventListener('click', e => {
