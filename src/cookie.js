@@ -74,21 +74,16 @@ addButton.addEventListener('click', () => {
     const filterValue = filterNameInput.value;
     const allCookie = parseCookie();
 
+    addCookie(name, value);
     if (filterValue) {
-        if (!isMatching(name, filterValue) && !isMatching(value, filterValue)) {
-            addCookie(name, value);
-        } else {
-            addCookie(name, value);
+        if (isMatching(name, filterValue) || isMatching(value, filterValue)) {
             addRowTable(name, value)
         }
         if (allCookie.hasOwnProperty(name) && !isMatching(value, filterValue)) {
             deleteRowTable(getRowTable(name));
         }
-
     } else {
-        addCookie(name, value);
         renderTable(parseCookie());
-
     }
 });
 
