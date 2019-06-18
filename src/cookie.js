@@ -14,9 +14,9 @@
  Если добавляется cookie с именем уже существующей cookie, то ее значение в браузере и таблице должно быть обновлено
 
  7.3: На странице должно быть текстовое поле для фильтрации cookie
- В таблице должны быть только те cookie, в имени или значении которых, хотя бы частично, есть введенное значение
- Если в поле фильтра пусто, то должны выводиться все доступные cookie
- Если добавляемая cookie не соответсвует фильтру, то она должна быть добавлена только в браузер, но не в таблицу
+ +В таблице должны быть только те cookie, в имени или значении которых, хотя бы частично, есть введенное значение
+ +Если в поле фильтра пусто, то должны выводиться все доступные cookie
+ +Если добавляемая cookie не соответсвует фильтру, то она должна быть добавлена только в браузер, но не в таблицу
  Если добавляется cookie, с именем уже существующей cookie и ее новое значение не соответствует фильтру,
  то ее значение должно быть обновлено в браузере, а из таблицы cookie должна быть удалена
 
@@ -57,7 +57,13 @@ window.addEventListener('DOMContentLoaded', ()=>{
     const allCookie = parseCookie();
 
     renderTable(allCookie);
-    initDeleteButton()
+
+    listTable.addEventListener('click', e => {
+        if (e.target.classList.contains('button')) {
+            deleteCookie(e.target.dataset.name);
+            deleteRowTable(e.target.closest('tr'));
+        }
+    })
 
 });
 
@@ -66,22 +72,22 @@ addButton.addEventListener('click', () => {
     const name = addNameInput.value;
     const value = addValueInput.value;
     const filterValue = filterNameInput.value;
+    const allCookie = parseCookie();
 
-    addCookie(name, value);
-    clearForm();
-
-    if (!filterValue) {
-        const allCookie = parseCookie();
-
-        renderTable(allCookie)
-    } else {
-        if (isMatching(name, filterValue) || isMatching(value, filterValue)) {
-            if (name === filterValue) {
-                deleteRowTable(getRowTable(name));
-            } else {
-                addRowTable(name, value);
-            }
+    if (filterValue) {
+        if (!isMatching(name, filterValue) && !isMatching(value, filterValue)) {
+            addCookie(name, value);
+        } else {
+            addCookie(name, value);
+            addRowTable(name, value)
         }
+        if (allCookie.hasOwnProperty(name) && !isMatching(value, filterValue)) {
+            deleteRowTable(getRowTable(name));
+        }
+
+    } else {
+        addCookie(name, value);
+        renderTable(parseCookie());
 
     }
 });
@@ -107,23 +113,7 @@ function deleteCookie(name) {
     document.cookie = `${name}=''; expires='Thu, 01 Jan 1970 00:00:01 GMT'`;
 }
 
-function initDeleteButton() {
-    listTable.addEventListener('click', e => {
-        if (e.target.classList.contains('button')) {
-            deleteCookie(e.target.dataset.name);
-            deleteRowTable(e.target.closest('tr'));
-        }
-    })
 
-}
-/*function checkCookie(name, value) {
-    const cookie = parseCookie();
-
-    if (cookie.hasOwnProperty(name)) {
-        cookie[name] = value;
-    }
-
-}*/
 
 function addRowTable(name, value) {
     const tr = document.createElement('tr');
@@ -186,7 +176,8 @@ function filterObj(value, obj) {
 
     return filterObj;
 }
+/*
 function clearForm() {
     addNameInput.value = '';
     addValueInput.value = '';
-}
+}*/
