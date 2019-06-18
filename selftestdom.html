@@ -10,21 +10,55 @@
     <b class="some-class-1 some-class-2">loftschool</b>
   </div>
 <script>
-    function deleteTextNodesRecursive(where) {
-        let list = where.childNodes;
 
-        if (list.length > 0) {
+     function loadAndSortTowns() {
+        return new Promise(((resolve, reject) => {
+           /* let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
+            let result = [];
+            */
 
-            for (let item of list) {
-                if (item.nodeType === 3) {
-                    let parent = item.parentNode;
+            /*fetch(url)
+                .then((response)=> {
+                    response.json()
+                        .then((json)=> {
+                            for (let town of json) {
+                                result.push(town);
+                            }
+                            resolve(result.sort((a, b) => {
+                                if (a.name > b.name) {
+                                    return 1;
+                                }
+                                if (a.name < b.name) {
+                                    return -1;
+                                }
 
-                    parent.removeChild(item);
-                }
-                if (item) {
-                    deleteTextNodesRecursive(item)
-                }
-            }
-        }
+                                return 0;
+                            }))
+                        })
+                })
+                .catch((e)=>{
+                    throw new Error(e.message)
+                })*/
+            let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
+            resolve ((async ()=>{
+                const response = await fetch(url);
+                const json = await response.json();
+                return json.sort((a, b) => {
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                    if (a.name < b.name) {
+                        return -1;
+                    }
+
+                    return 0;
+                })
+                })()
+
+            )
+
+        }))
     }
+    loadAndSortTowns().then(towns => console.log(towns))
+
 </script>
