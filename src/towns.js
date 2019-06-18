@@ -39,35 +39,30 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-    return new Promise((resolve, reject)=>{
-        let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
-        let loaderList = async () => {
-            try {
-                const response = await fetch(url);
-                const json = await response.json();
+    let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
 
-                return json.sort((a, b) => {
-                    if (a.name > b.name) {
-                        return 1;
-                    }
-                    if (a.name < b.name) {
-                        return -1;
-                    }
+    return (async () => {
+        try {
+            const response = await fetch(url);
+            const json = await response.json();
 
-                    return 0;
-                })
-            } catch (e) {
-                throw new Error(e.message);
-            }
-        };
-        let loadList = loaderList();
+            return json.sort((a, b) => {
+                if (a.name > b.name) {
+                    return 1;
+                }
+                if (a.name < b.name) {
+                    return -1;
+                }
 
-        if (loadList) {
-            resolve(loadList)
-        } else {
-            reject();
+                return 0;
+            })
+        } catch (e) {
+            throw new Error(e.message);
         }
-    })
+    })();
+    // return loaderList()
+
+
 }
 
 /*
@@ -142,11 +137,16 @@ function reloader(mode) {
 
 // Функция получения данных с сервера и записи в хранилище
 const getTownFromServer = async ()=>{
-    let res = await loadTowns();
+    try {
+        let res = await loadTowns();
 
-    localStorage.setItem('townList', JSON.stringify(res));
+        localStorage.setItem('townList', JSON.stringify(res));
 
-    return res;
+        return res;
+    } catch (e) {
+        console.error(e.message)
+    }
+
 };
 
 // Функция получения данных из хранилища
